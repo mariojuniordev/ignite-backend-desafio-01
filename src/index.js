@@ -81,7 +81,7 @@ app.put('/todos/:id', checksIfUserAccountExists, (request, response) => {
   const matchingTodo = user.todos.find((todo) => todo.id === id)
 
   if (!matchingTodo) {
-    return response.status(400).json({ error: "Todo not found" });
+    return response.status(400).json({ error: "You cannot update a non existing todo" });
   }
   
   matchingTodo.title = title;
@@ -97,7 +97,7 @@ app.patch('/todos/:id/done', checksIfUserAccountExists, (request, response) => {
   const matchingTodo = user.todos.find((todo) => todo.id === id)
 
   if (!matchingTodo) {
-    return response.status(400).json({ error: "Todo not found" });
+    return response.status(400).json({ error: "You cannot mark a non existing todo as done" });
   }
 
   matchingTodo.done = true;
@@ -112,12 +112,12 @@ app.delete('/todos/:id', checksIfUserAccountExists, (request, response) => {
   const matchingTodo = user.todos.find((todo) => todo.id === id)
 
   if (!matchingTodo) {
-    return response.status(400).json({ error: "Todo not found" });
+    return response.status(400).json({ error: "You cannot delete a non existing todo" });
   }
 
-  user.todos.splice(matchingTodo, 1);
+  const deletedTodo = user.todos.splice(matchingTodo, 1);
 
-  return response.status(200).json(user.todos);
+  return response.status(200).json(deletedTodo);
 });
 
 module.exports = app;
