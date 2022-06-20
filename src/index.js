@@ -17,7 +17,7 @@ function checksIfUserAccountExists(request, response, next) {
   const user = users.find((user) => user.username === username)
 
   if(!user) {
-    return response.status(400).json({ error: "User not found" });
+    return response.status(404).json({ error: "User not found" });
   }
 
   request.user = user;
@@ -28,12 +28,12 @@ function checksIfUserAccountExists(request, response, next) {
 app.post('/users', (request, response) => {
   const { username, name } = request.body;
 
-  const userAlreadyExists = users.some(
+  const userExists = users.find(
     (user) => user.username === username
   )
 
-  if (userAlreadyExists) {
-    return response.status(400).json({ error: "User already exists!" });
+  if (userExists) {
+    return response.status(400).json({ error: "User already exists" });
   }
 
   const userObj = { 
@@ -81,7 +81,7 @@ app.put('/todos/:id', checksIfUserAccountExists, (request, response) => {
   const matchingTodo = user.todos.find((todo) => todo.id === id)
 
   if (!matchingTodo) {
-    return response.status(400).json({ error: "You cannot update a non existing todo" });
+    return response.status(404).json({ error: "Todo not found" });
   }
   
   matchingTodo.title = title;
@@ -97,7 +97,7 @@ app.patch('/todos/:id/done', checksIfUserAccountExists, (request, response) => {
   const matchingTodo = user.todos.find((todo) => todo.id === id)
 
   if (!matchingTodo) {
-    return response.status(400).json({ error: "You cannot mark a non existing todo as done" });
+    return response.status(404).json({ error: "Todo not found" });
   }
 
   matchingTodo.done = true;
@@ -112,12 +112,12 @@ app.delete('/todos/:id', checksIfUserAccountExists, (request, response) => {
   const matchingTodo = user.todos.find((todo) => todo.id === id)
 
   if (!matchingTodo) {
-    return response.status(400).json({ error: "You cannot delete a non existing todo" });
+    return response.status(404).json({ error: "Todo not found" });
   }
 
   const deletedTodo = user.todos.splice(matchingTodo, 1);
 
-  return response.status(200).json(deletedTodo);
+  return response.status(204).json();
 });
 
 module.exports = app;
